@@ -1,7 +1,5 @@
 package com.challenge.druid.util.validator;
 
-import com.challenge.druid.util.validator.PasswordConstraintValidator;
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;
