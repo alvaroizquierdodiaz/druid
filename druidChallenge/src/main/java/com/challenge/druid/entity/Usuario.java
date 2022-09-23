@@ -10,15 +10,22 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -31,6 +38,9 @@ public class Usuario implements Serializable {
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "ID")
   private int id;
+
+  @NotBlank
+  private String nombreUsuario;
 
   @NotNull
   @NotEmpty(message = "El email no puede estar vacío")
@@ -60,5 +70,9 @@ public class Usuario implements Serializable {
   @Column(name = "FECHA")
   @JsonFormat(pattern="yyyy-MM-dd")
   private LocalDate fechaNacimiento;
+
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private Set<Rol> roles = new HashSet<>();
 
 }

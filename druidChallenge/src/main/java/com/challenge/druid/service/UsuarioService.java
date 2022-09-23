@@ -1,7 +1,9 @@
 package com.challenge.druid.service;
 
 import com.challenge.druid.dto.UsuarioDTO;
+import com.challenge.druid.entity.Rol;
 import com.challenge.druid.entity.Usuario;
+import com.challenge.druid.enums.RoleEnum;
 import com.challenge.druid.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,9 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -23,6 +27,9 @@ public class UsuarioService {
 
   @Autowired
   private UsuarioRepository usuarioRepository;
+
+  @Autowired
+  private RolService rolService;
 
   public UsuarioDTO getUserByEmail(String email) {
     var usuario = usuarioRepository
@@ -54,10 +61,15 @@ public class UsuarioService {
 
   public ResponseEntity<?>  createUser(Usuario usuario) {
     Usuario nuevoUsuario = new Usuario();
+    Set<Rol> roles = new HashSet<>();
     if (Period.between(usuario.getFechaNacimiento(), LocalDate.now()).getYears() >= 14) {
       if (usuarioRepository.findById(usuario.getId()).isPresent()) {
         return new ResponseEntity(new String("Usuario ya se encuentra en la base de datos"), HttpStatus.CREATED);
       } else {
+        roles.add(rolService.getByRolName(RoleEnum.ROLE_USER).get());
+        if(nuevoUsuario.getRoles().contains("admin")){
+          roles.add(rolService.getByRolName(RoleEnum.ROLE_ADMIN).get());
+        }
         return new ResponseEntity(new UsuarioDTO(usuarioRepository.save(usuario)), HttpStatus.OK);
       }
     }

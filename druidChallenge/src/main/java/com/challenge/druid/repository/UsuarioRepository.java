@@ -15,6 +15,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
   Optional<Usuario> findByEmail(String email);
 
+  Optional<Usuario> findByNombreUsuario(String nombreUsuario);
+
   @Query(value = "SELECT * FROM USUARIO u WHERE u.FECHA BETWEEN :fechaNacimientoInicial AND :fechaNacimientoFinal", nativeQuery = true)
   List<Usuario> getUsersBetweenDates(@Param("fechaNacimientoInicial") LocalDate fechaNacimientoInicial,
                                        @Param("fechaNacimientoFinal") LocalDate fechaNacimientoFinal);
